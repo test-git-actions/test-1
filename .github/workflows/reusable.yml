@@ -1,27 +1,23 @@
 name: Flutter CI Workflow
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       projectType:
+        type: "string"
         description: 'Type of project (e.g., flutter, other)'
         required: true
         default: 'flutter'
       flutter_channel:
+        type: "string"
         description: 'Flutter channel (e.g., stable, beta)'
         required: false
         default: 'stable'
       flutter_version:
+        type: "string"
         description: 'Flutter version (e.g., 3.0.2)'
         required: false
         default: '3.0.2'
-
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build-and-test:
