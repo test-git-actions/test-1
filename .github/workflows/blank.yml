@@ -1,0 +1,53 @@
+name: Flutter CI Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      projectType:
+        description: 'Type of project (e.g., flutter, other)'
+        required: true
+        default: 'flutter'
+      flutter_channel:
+        description: 'Flutter channel (e.g., stable, beta)'
+        required: false
+        default: 'stable'
+      flutter_version:
+        description: 'Flutter version (e.g., 3.0.2)'
+        required: false
+        default: '3.0.2'
+
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter SDK
+        if: ${{ inputs.projectType == 'flutter' }}
+        uses: flutter-actions/setup-flutter@v3
+        with:
+          channel: ${{ inputs.flutter_channel }}
+          version: ${{ inputs.flutter_version }}
+
+      - name: Setup, Configure, and Validate Flutter
+        id: fvm-config-action
+        if: ${{ inputs.projectType == 'flutter' }}
+        run: |
+          # Configure FVM
+          fvm flutter config-action
+
+          # Install dependencies
+          flutter pub get
+
+          # Validate the code
+          flutter analyze
+          dart format --set-exit-if-changed test lib integration_test
+          flutter test
