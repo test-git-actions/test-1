@@ -1,4 +1,4 @@
-name: "Incremental GitHub Sync - test"
+name: "Incremental GitHub Sync - test-1"
 
 on:
   schedule:
