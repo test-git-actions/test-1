@@ -20,6 +20,22 @@ else
     cd "$MIRROR_DIR" || exit
 fi
 
+# Fetch latest changes from destination repo
+echo "🔍 Fetching latest changes from destination..."
+git remote add dest "$DEST_GITHUB/$REPO_NAME.git" 2>/dev/null || true
+git fetch dest --prune
+
+# Find changed files
+echo "📂 Listing changed files..."
+CHANGED_FILES=$(git diff --name-only HEAD..dest/main)
+
+if [ -z "$CHANGED_FILES" ]; then
+    echo "✅ No changes detected."
+else
+    echo "🔄 Changed files:"
+    echo "$CHANGED_FILES"
+fi
+
 # Push changes to the new GitHub instance
 echo "🚀 Pushing updates to $DEST_GITHUB..."
 git push --mirror "$DEST_GITHUB/$REPO_NAME.git"
