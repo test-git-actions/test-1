@@ -31,19 +31,22 @@ BRANCHES=$(git branch -r | grep -v '\->' | sed 's/origin\///')
 SUMMARY=""
 for branch in $BRANCHES; do
     echo "🔄 Checking changes for branch: $branch"
-    # Fetch the latest branches from both remotes (ensure they are available locally)
-    git fetch origin "$branch"  # Ensure we have the latest data for the source
-    git fetch dest "$branch"    # Ensure we have the latest data for the destination
 
-    # Create tracking branches locally if they don't exist
-    git branch --track "$branch" "origin/$branch" 2>/dev/null || true
-    git branch --track "$branch" "dest/$branch" 2>/dev/null || true
-
-    # Ensure we have the latest data for diff comparison
-    git checkout "$branch"  # Checkout the branch in the working tree
-
-    # Corrected git diff comparison
-    CHANGED_FILES=$(git diff --name-only "origin/$branch" "dest/$branch")
+    CHANGED_FILES=$(git diff --name-only HEAD..dest/$branch)
+    
+    # if [ -z "$CHANGED_FILES" ]; then
+    #     echo "✅ No changes detected."
+    #     echo "✅ No changes detected." >> "$GITHUB_STEP_SUMMARY"
+    # else
+    #     FILE_COUNT=$(echo "$CHANGED_FILES" | wc -l)
+    #     SUMMARY="🔄 **$FILE_COUNT files changed:**\n\n$(echo "$CHANGED_FILES" | head -10 | sed 's/^/- /')"
+        
+    #     if [ "$FILE_COUNT" -gt 10 ]; then
+    #         SUMMARY+="\n\n... and $((FILE_COUNT - 10)) more files."
+    #     fi
+    
+    #     echo -e "$SUMMARY" >> "$GITHUB_STEP_SUMMARY"
+    # fi
     
     if [ -n "$CHANGED_FILES" ]; then
         FILE_COUNT=$(echo "$CHANGED_FILES" | wc -l)
