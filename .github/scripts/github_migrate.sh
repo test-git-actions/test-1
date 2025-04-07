@@ -25,19 +25,48 @@ echo "🔍 Fetching latest changes from destination..."
 git remote add dest "$DEST_GITHUB/$DEST_REPO_NAME.git" 2>/dev/null || true
 git fetch dest --prune
 
-CHANGED_FILES=$(git diff --name-only HEAD..dest/main)
+# CHANGED_FILES=$(git diff --name-only HEAD..dest/main)
 
-if [ -z "$CHANGED_FILES" ]; then
-    echo "✅ No changes detected."
-    echo "✅ No changes detected." >> "$GITHUB_STEP_SUMMARY"
-else
-    FILE_COUNT=$(echo "$CHANGED_FILES" | wc -l)
-    SUMMARY="🔄 **$FILE_COUNT files changed:**\n\n$(echo "$CHANGED_FILES" | head -10 | sed 's/^/- /')"
+# if [ -z "$CHANGED_FILES" ]; then
+#     echo "✅ No changes detected."
+#     echo "✅ No changes detected." >> "$GITHUB_STEP_SUMMARY"
+# else
+#     FILE_COUNT=$(echo "$CHANGED_FILES" | wc -l)
+#     SUMMARY="🔄 **$FILE_COUNT files changed:**\n\n$(echo "$CHANGED_FILES" | head -10 | sed 's/^/- /')"
     
-    if [ "$FILE_COUNT" -gt 10 ]; then
-        SUMMARY+="\n\n... and $((FILE_COUNT - 10)) more files."
-    fi
+#     if [ "$FILE_COUNT" -gt 10 ]; then
+#         SUMMARY+="\n\n... and $((FILE_COUNT - 10)) more files."
+#     fi
 
+#     echo -e "$SUMMARY" >> "$GITHUB_STEP_SUMMARY"
+# fi
+
+# Loop over all branches and find changes
+BRANCHES=$(git branch -r | grep -v '\->' | sed 's/origin\///')
+
+SUMMARY=""
+for branch in $BRANCHES; do
+    echo "🔄 Checking changes for branch: $branch"
+    
+    # CHANGED_FILES=$(git diff --name-only "origin/$branch" "dest/$branch")
+    CHANGED_FILES=$(git diff --name-only HEAD..$branch)
+    
+    if [ -z "$CHANGED_FILES" ]; then
+        echo "✅ No changes detected in branch $branch."
+    else
+        FILE_COUNT=$(echo "$CHANGED_FILES" | wc -l)
+        SUMMARY+="\n🔄 **$branch** - $FILE_COUNT files changed:\n\n$(echo "$CHANGED_FILES" | head -10 | sed 's/^/- /')"
+        
+        if [ "$FILE_COUNT" -gt 10 ]; then
+            SUMMARY+="\n\n... and $((FILE_COUNT - 10)) more files."
+        fi
+    fi
+done
+
+if [ -z "$SUMMARY" ]; then
+    echo "✅ No changes detected in any branch."
+    echo "✅ No changes detected in any branch." >> "$GITHUB_STEP_SUMMARY"
+else
     echo -e "$SUMMARY" >> "$GITHUB_STEP_SUMMARY"
 fi
 
