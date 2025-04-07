@@ -31,10 +31,19 @@ BRANCHES=$(git branch -r | grep -v '\->' | sed 's/origin\///')
 SUMMARY=""
 for branch in $BRANCHES; do
     echo "🔄 Checking changes for branch: $branch"
-    # Ensure both source and destination branches exist
+    # Fetch the latest branches from both remotes (ensure they are available locally)
     git fetch origin "$branch"  # Ensure we have the latest data for the source
     git fetch dest "$branch"    # Ensure we have the latest data for the destination
-    CHANGED_FILES=$(git diff --name-only "origin/$branch"..dest/"$branch")
+
+    # Create tracking branches locally if they don't exist
+    git branch --track "$branch" "origin/$branch" 2>/dev/null || true
+    git branch --track "$branch" "dest/$branch" 2>/dev/null || true
+
+    # Ensure we have the latest data for diff comparison
+    git checkout "$branch"  # Checkout the branch in the working tree
+
+    # Corrected git diff comparison
+    CHANGED_FILES=$(git diff --name-only "origin/$branch" "dest/$branch")
     
     if [ -n "$CHANGED_FILES" ]; then
         FILE_COUNT=$(echo "$CHANGED_FILES" | wc -l)
