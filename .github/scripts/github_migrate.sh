@@ -32,7 +32,7 @@ SUMMARY=""
 for branch in $BRANCHES; do
     echo "🔄 Checking changes for branch: $branch"
 
-    CHANGED_FILES=$(git diff --name-only HEAD..dest/$branch)
+    CHANGED_FILES=$(git diff --name-only HEAD../$branch)
     
     # if [ -z "$CHANGED_FILES" ]; then
     #     echo "✅ No changes detected."
