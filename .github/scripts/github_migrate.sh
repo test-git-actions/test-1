@@ -3,7 +3,7 @@
 # Configuration
 SOURCE_GITHUB="https://$GITHUB_SOURCE_TOKEN@github.com/$SOURCE_ORG"
 DEST_GITHUB="https://$GITHUB_DEST_TOKEN@github.com/$TARGET_ORG"
-# REPO_NAME="$REPO_NAME"
+DEST_REPO_NAME="test-3"
 MIRROR_DIR="/tmp/$REPO_NAME"
 
 # Logging
@@ -22,7 +22,7 @@ fi
 
 # Fetch latest changes from destination repo
 echo "🔍 Fetching latest changes from destination..."
-git remote add dest "$DEST_GITHUB/$REPO_NAME.git" 2>/dev/null || true
+git remote add dest "$DEST_GITHUB/$DEST_REPO_NAME.git" 2>/dev/null || true
 git fetch dest --prune
 
 # Find changed files
@@ -38,6 +38,6 @@ fi
 
 # Push changes to the new GitHub instance
 echo "🚀 Pushing updates to $DEST_GITHUB..."
-git push --mirror "$DEST_GITHUB/$REPO_NAME.git"
+git push --mirror "$DEST_GITHUB/$DEST_REPO_NAME.git"
 
 echo "✅ Sync completed at $(date)"
