@@ -9,7 +9,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     env:
-      TARGET_ORG: "mgmri-commerce"
+      TARGET_ORG: "test-git-actions"
       REPO_NAME: "test-1"
       SOURCE_ORG: "test-git-actions"
     steps:
