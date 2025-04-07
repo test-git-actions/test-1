@@ -31,6 +31,9 @@ BRANCHES=$(git branch -r | grep -v '\->' | sed 's/origin\///')
 SUMMARY=""
 for branch in $BRANCHES; do
     echo "🔄 Checking changes for branch: $branch"
+    # Ensure both source and destination branches exist
+    git fetch origin "$branch"  # Ensure we have the latest data for the source
+    git fetch dest "$branch"    # Ensure we have the latest data for the destination
     CHANGED_FILES=$(git diff --name-only "origin/$branch"..dest/"$branch")
     
     if [ -n "$CHANGED_FILES" ]; then
