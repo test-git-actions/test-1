@@ -22,3 +22,9 @@ jobs:
           GITHUB_DEST_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           bash ./.github/scripts/github_migrate.sh
+
+      - name: Upload Incremental Push Logs        
+        uses: actions/upload-artifact@v4
+        with:
+          name: incremental-push-logs
+          path: tmp/incremental-push
