@@ -65,7 +65,9 @@ else
 fi
 
 # Add download link to the GitHub summary
-echo -e "\n📥 [Download Repository ZIP](./artifact/download?name=${REPO_NAME}_mirror)" >> "$GITHUB_STEP_SUMMARY"
+# echo -e "\n📥 [Download Repository ZIP](./artifact/download?name=${REPO_NAME}_mirror)" >> "$GITHUB_STEP_SUMMARY"
+echo -e "\n📥 **Download Repository ZIP**: [Go to Actions → Run Summary → Artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> "$GITHUB_STEP_SUMMARY"
+
 
 # Push changes to the new GitHub instance
 echo "🚀 Pushing updates to $DEST_GITHUB..."
