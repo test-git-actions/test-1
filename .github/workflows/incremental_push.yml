@@ -27,4 +27,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: incremental-push-logs
-          path: tmp/incremental-push
+          path: /tmp/${{ env.REPO_NAME }}_sync.log
